@@ -8,12 +8,10 @@ from telethon.tl.functions.messages import SearchRequest
 from telethon.tl.functions.channels import DeleteMessagesRequest
 from telethon.tl.types import InputMessagesFilterEmpty
 from telethon.tl.types import Channel
+from telethon.tl.patched import MessageService
 
 api_id = int(os.environ['API_ID'])
 api_hash = os.environ['API_HASH']
-
-client = TelegramClient('login', api_id, api_hash)
-client.start()
 
 
 async def main():
@@ -43,15 +41,20 @@ async def main():
             max_id=0,
             limit=100
         ))
-        if len(result.messages) == 0:
+        messages = [x for x in result.messages if not isinstance(x, MessageService)]
+        if len(messages) == 0:
             break
         ids = []
-        for msg in result.messages:
+        for msg in messages:
             ids.append(msg.id)
             print('%s %s %s' % (msg.date, msg.id, len(ids)))
         result = await client(DeleteMessagesRequest(chat, ids))
         print(result)
         time.sleep(1)
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(main())
+if __name__ == '__main__':
+    client = TelegramClient('login', api_id, api_hash)
+    client.start()
+
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
