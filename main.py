@@ -5,7 +5,6 @@ import time
 import os
 from telethon import TelegramClient
 from telethon.tl.functions.messages import SearchRequest
-from telethon.tl.functions.channels import DeleteMessagesRequest
 from telethon.tl.types import InputMessagesFilterEmpty
 from telethon.tl.types import Channel
 from telethon.tl.patched import MessageService
@@ -48,7 +47,7 @@ async def main():
         for msg in messages:
             ids.append(msg.id)
             print('%s %s %s' % (msg.date, msg.id, len(ids)))
-        result = await client(DeleteMessagesRequest(chat, ids))
+        result = await client.delete_messages(chat, ids, revoke=True)
         print(result)
         time.sleep(1)
 
