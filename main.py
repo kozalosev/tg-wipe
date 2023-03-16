@@ -47,8 +47,8 @@ async def main():
         for msg in messages:
             ids.append(msg.id)
             print('%s %s %s' % (msg.date, msg.id, len(ids)))
-        result = await client.delete_messages(chat, ids, revoke=True)
-        print(result)
+        for result in (await client.delete_messages(chat, ids, revoke=True)):
+            print(result)
         time.sleep(1)
 
 if __name__ == '__main__':
